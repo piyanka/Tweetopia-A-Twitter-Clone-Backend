@@ -18,32 +18,17 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const express4_1 = require("@apollo/server/express4");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
-// Sample data
-const books = [
-    {
-        title: 'The Awakening',
-        author: 'Kate Chopin',
-    },
-    {
-        title: 'City of Glass',
-        author: 'Paul Auster',
-    },
-];
-// Proper GraphQL type definitions (SDL syntax)
+const user_1 = require("./user");
 const typeDefs = `#graphql
-  type Book {
-    title: String
-    author: String
-  }
+ 
+    ${user_1.User.types}
 
-  type Query {
-    books: [Book]
-  }
+    type Query {
+      ${user_1.User.queries}
+    }
 `;
 const resolvers = {
-    Query: {
-        books: () => books,
-    },
+    Query: Object.assign({}, user_1.User.resolvers.queries),
 };
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {

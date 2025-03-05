@@ -4,33 +4,22 @@ import { expressMiddleware } from '@apollo/server/express4';
 import express from 'express';
 import cors from 'cors';
 
-// Sample data
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
+import { User } from './user';
 
-// Proper GraphQL type definitions (SDL syntax)
+
+
 const typeDefs = `#graphql
-  type Book {
-    title: String
-    author: String
-  }
+ 
+    ${User.types}
 
-  type Query {
-    books: [Book]
-  }
+    type Query {
+      ${User.queries}
+    }
 `;
 
 const resolvers = {
   Query: {
-    books: () => books,
+    ...User.resolvers.queries,
   },
 };
 
