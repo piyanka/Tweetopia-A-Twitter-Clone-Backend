@@ -19,8 +19,8 @@ const express4_1 = require("@apollo/server/express4");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const user_1 = require("./user");
+const jwt_1 = __importDefault(require("../services/jwt"));
 const typeDefs = `#graphql
- 
     ${user_1.User.types}
 
     type Query {
@@ -33,14 +33,20 @@ const resolvers = {
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
-        // Add CORS middleware
+        app.use(body_parser_1.default.json());
         app.use((0, cors_1.default)());
-        const graphQLServer = new server_1.ApolloServer({
+        const graphqlServer = new server_1.ApolloServer({
             typeDefs,
             resolvers,
         });
-        yield graphQLServer.start();
-        app.use('/graphql', body_parser_1.default.json(), (0, express4_1.expressMiddleware)(graphQLServer));
+        yield graphqlServer.start();
+        app.use('/graphql', (0, express4_1.expressMiddleware)(graphqlServer, {
+            context: (_a) => __awaiter(this, [_a], void 0, function* ({ req, res }) {
+                return {
+                    user: req.headers.authorization ? jwt_1.default.decodeToken(req.headers.authorization.split('Bearer ')[1]) : undefined,
+                };
+            })
+        }));
         return app;
     });
 }

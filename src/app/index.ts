@@ -3,13 +3,11 @@ import bodyParser from 'body-parser';
 import { expressMiddleware } from '@apollo/server/express4';
 import express from 'express';
 import cors from 'cors';
-
 import { User } from './user';
-
-
+import { GrqphqlContext } from '../interface';
+import JWTService from '../services/jwt';
 
 const typeDefs = `#graphql
- 
     ${User.types}
 
     type Query {
@@ -25,22 +23,23 @@ const resolvers = {
 
 export async function initServer() {
   const app = express();
-
-  // Add CORS middleware
+  app.use(bodyParser.json());
   app.use(cors());
 
-  const graphQLServer = new ApolloServer({
+  const graphqlServer = new ApolloServer<GrqphqlContext>({
     typeDefs,
     resolvers,
   });
 
-  await graphQLServer.start();
+  await graphqlServer.start();
 
-  app.use(
-    '/graphql',
-    bodyParser.json(),
-    expressMiddleware(graphQLServer),
-  );
+  app.use('/graphql', expressMiddleware(graphqlServer, {
+    context: async ({ req, res }) => {
+      return {
+        user: req.headers.authorization ? JWTService.decodeToken(req.headers.authorization.split('Bearer ')[1]) : undefined,
+      }
+    }
+  }));
 
   return app;
 }
