@@ -57,6 +57,7 @@ const queries = {
     },
     getCurrentUser: async (parent: any, args: any, ctx: GrqphqlContext) =>{
         // console.log(ctx);
+        // console.log("User in context:", ctx.user);
         const id = ctx.user?.id;
         if (!id) return null;
 
