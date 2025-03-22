@@ -19,17 +19,21 @@ const express4_1 = require("@apollo/server/express4");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const user_1 = require("./user");
+const tweet_1 = require("./tweet");
 const jwt_1 = __importDefault(require("../services/jwt"));
 const typeDefs = `#graphql
     ${user_1.User.types}
+    ${tweet_1.Tweet.types}
 
     type Query {
       ${user_1.User.queries}
+      ${tweet_1.Tweet.queries}
     }
+
+    type Mutation {
+    ${tweet_1.Tweet.mutations}}
 `;
-const resolvers = {
-    Query: Object.assign({}, user_1.User.resolvers.queries),
-};
+const resolvers = Object.assign(Object.assign({ Query: Object.assign(Object.assign({}, user_1.User.resolvers.queries), tweet_1.Tweet.resolvers.queries), Mutation: Object.assign({}, tweet_1.Tweet.resolvers.mutations) }, tweet_1.Tweet.resolvers.extraResolvers), user_1.User.resolvers.extraResolvers);
 function initServer() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();

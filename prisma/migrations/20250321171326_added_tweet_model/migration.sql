@@ -10,5 +10,5 @@ CREATE TABLE "Tweet" (
     CONSTRAINT "Tweet_pkey" PRIMARY KEY ("id")
 );
 
---AddForeignKey
-ALTER TABLE "Tweet" ADD CONSTRAINT "Tweet_authorID_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- --AddForeignKey
+ALTER TABLE "Tweet" ADD CONSTRAINT "Tweet_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

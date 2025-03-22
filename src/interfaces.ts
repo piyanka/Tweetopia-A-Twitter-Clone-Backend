@@ -3,6 +3,6 @@ export interface JWTUser{
     email: string;
 }
 
-export interface GrqphqlContext {
+export interface GraphqlContext {
    user?: JWTUser; 
 }
