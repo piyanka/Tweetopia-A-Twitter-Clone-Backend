@@ -36,9 +36,9 @@ const queries = {
             responseType: "json"
         });
 
-        const user = await prismaClient.user.findUnique({where: { email: data.email}, });
+        const user = await prismaClient.user.findUnique({ where: { email: data.email }, });
 
-        if (!user){
+        if (!user) {
             await prismaClient.user.create({
                 data: {
                     email: data.email,
@@ -48,29 +48,30 @@ const queries = {
                 },
             });
         }
-        const userInDb = await prismaClient.user.findUnique({where: {email: data.email}});
+        const userInDb = await prismaClient.user.findUnique({ where: { email: data.email } });
 
         if (!userInDb) throw new Error("User with email not found");
-        
+
         const userToken = JWTService.generateTokenForUser(userInDb);
-        
+
         return userToken;
     },
-    getCurrentUser: async (parent: any, args: any, ctx: GraphqlContext) =>{
+    getCurrentUser: async (parent: any, args: any, ctx: GraphqlContext) => {
         // console.log(ctx);
         // console.log("User in context:", ctx.user);
         const id = ctx.user?.id;
         if (!id) return null;
 
-        const user = await prismaClient.user.findUnique({where: {id}});
+        const user = await prismaClient.user.findUnique({ where: { id } });
         return user;
     },
+    getUserById: async (parent: any, { id }: { id: string }, ctx: GraphqlContext) => prismaClient.user.findUnique({ where: { id } })
 };
 
 const extraResolvers = {
     User: {
         tweets: (parent: User) =>
-            prismaClient.tweet.findMany({ where: {author: {id: parent.id}}})
+            prismaClient.tweet.findMany({ where: { author: { id: parent.id } } })
     },
 };
 export const resolvers = { queries, extraResolvers };
