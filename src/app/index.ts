@@ -18,7 +18,9 @@ const typeDefs = `#graphql
     }
 
     type Mutation {
-    ${Tweet.mutations}}
+    ${Tweet.mutations}
+    ${User.mutations}
+}
 `;
 
 const resolvers = {
@@ -29,6 +31,7 @@ const resolvers = {
 
   Mutation: {
     ...Tweet.resolvers.mutations,
+    ...User.resolvers.mutations,
   },
   ...Tweet.resolvers.extraResolvers,
   ...User.resolvers.extraResolvers,

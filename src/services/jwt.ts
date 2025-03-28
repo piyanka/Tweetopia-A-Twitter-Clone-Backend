@@ -12,7 +12,7 @@ class JWTService {
         };
 
 
-        const token = JWT.sign(payload, JWT_SECRET);
+        const token = JWT.sign(payload, JWT_SECRET, { expiresIn: "1h"});
         return token;
     }
 
