@@ -4,6 +4,7 @@ import JWTService from "../../services/jwt";
 import { GraphqlContext } from '../../interfaces';
 import { User } from "@prisma/client";
 import UserService from "../../services/user";
+import { redisClient } from "../../clients/redis";
 
 
 const queries = {
@@ -32,48 +33,54 @@ const extraResolvers = {
                 where: { follower: { id: parent.id } },
                 include: {
                     follower: true,
-                } });
-                return result.map((el) => el.follower);       
-    },
-    following: async (parent: User) => {
-        const result = await prismaClient.follows.findMany({
-            where: { follower: { id: parent.id } },
-            include: {
-               
-                following: true,
-            }
-        });
-        return result.map((el) => el.following);
-    },
+                }
+            });
+            return result.map((el) => el.follower);
+        },
+        following: async (parent: User) => {
+            const result = await prismaClient.follows.findMany({
+                where: { follower: { id: parent.id } },
+                include: {
 
-    
-    recommendedUsers: async (parent: User, _: any, ctx: GraphqlContext) => {
-        if (!ctx.user) return [];
-        const myFollowings = await prismaClient.follows.findMany({
-            where: {
-                follower: {id: ctx.user.id},
-            },
-            include: {
-                following: {
-                    include: {followers: {include: {following: true}}},
+                    following: true,
+                }
+            });
+            return result.map((el) => el.following);
+        },
+
+
+        recommendedUsers: async (parent: User, _: any, ctx: GraphqlContext) => {
+            if (!ctx.user) return [];
+            const cachedValue = await redisClient.get(`RECOMMENDED_USERS: ${ctx.user.id}`);
+
+            if (cachedValue) return JSON.parse(cachedValue);
+            const myFollowings = await prismaClient.follows.findMany({
+                where: {
+                    follower: { id: ctx.user.id },
                 },
-            },
-           
-        });
+                include: {
+                    following: {
+                        include: { followers: { include: { following: true } } },
+                    },
+                },
 
-        const users: User[] = []
-        for (const followings of myFollowings) {
-            for (const followingOfFollowedUser of followings.following.followers){
-                if (followingOfFollowedUser.following.id !== ctx.user.id && 
-                    myFollowings.findIndex(
-                        (e)=> e.followerId === followingOfFollowedUser.following.id)< 0){
-                            users.push(followingOfFollowedUser.following)
-                        }
+            });
+
+            const users: User[] = []
+            for (const followings of myFollowings) {
+                for (const followingOfFollowedUser of followings.following.followers) {
+                    if (followingOfFollowedUser.following.id !== ctx.user.id &&
+                        myFollowings.findIndex(
+                            (e) => e.followerId === followingOfFollowedUser.following.id) < 0) {
+                        users.push(followingOfFollowedUser.following)
+                    }
+                }
             }
+
+            await redisClient.set(`RECOMMENDED_USERS: ${ctx.user.id}`, JSON.stringify(users));
+            return users;
         }
-        return users;
-    }
-},
+    },
 };
 
 const mutations = {
@@ -81,6 +88,7 @@ const mutations = {
         if (!ctx.user || !ctx.user.id) throw new Error("Unauthenticated")
 
         await UserService.followUser(ctx.user.id, to);
+        await redisClient.del(`RECOMMENDED_USERS: ${ctx.user.id}`);
         return true;
 
     },
@@ -88,6 +96,7 @@ const mutations = {
         if (!ctx.user || !ctx.user.id) throw new Error("Unauthenticated")
 
         await UserService.unfollowUser(ctx.user.id, to);
+        await redisClient.del(`RECOMMENDED_USERS: ${ctx.user.id}`);
         return true;
 
     },
