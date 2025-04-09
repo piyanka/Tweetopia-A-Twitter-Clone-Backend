@@ -4,21 +4,21 @@ A full-featured Twitter-like backend built with Node.js, Express, GraphQL, and m
 ## ✨ Features
 
 - **Authentication**  
-  ✅ Google OAuth 2.0 with JWT  
-  🔒 Protected routes & rate limiting
+    Google OAuth 2.0 with JWT  
+    Protected routes & rate limiting
 
 - **Core Functionality**  
-  � Create/Delete/Edit Tweets  
-  ❤️ Like/Unlike tweets  
-  🔄 Retweet system  
-  👥 Follow/Unfollow users  
-  🧠 Smart user recommendations  
+    Create/Delete/Edit Tweets  
+    Like/Unlike tweets  
+    Retweet system  
+    Follow/Unfollow users  
+    Smart user recommendations  
 
 - **Tech Stack**  
-  🟢 **GraphQL** (Queries/Mutations/Resolvers)  
-  🛠 **Prisma** (ORM for PostgreSQL)  
-  🐘 **Neon** (Serverless PostgreSQL)  
-  🔴 **Redis** (Upstash for caching & rate limiting)  
+  **GraphQL** (Queries/Mutations/Resolvers)  
+  **Prisma** (ORM for PostgreSQL)  
+  **Neon** (Serverless PostgreSQL)  
+  **Redis** (Upstash for caching & rate limiting)  
 
 ## 🚀 Quick Start
 
@@ -36,9 +36,9 @@ cd tweetopia-backend
 yarn install
 cp .env.example .env
 
-**Database Setup**
-yarn prisma migrate dev
+Database Setup
+  yarn prisma migrate dev
 
-**Running Locally**
-yarn dev
+Running Locally
+  yarn dev
 
