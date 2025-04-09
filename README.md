@@ -34,7 +34,7 @@ A full-featured Twitter-like backend built with Node.js, Express, GraphQL, and m
 git clone https://github.com/your-username/tweetopia-backend.git
 cd tweetopia-backend
 yarn install
-cp .env.example .env
+
 
 Database Setup
   yarn prisma migrate dev
