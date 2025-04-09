@@ -1,9 +1,6 @@
 ﻿# Tweetopia-A-Twitter-Clone-Backend
 A full-featured Twitter-like backend built with Node.js, Express, GraphQL, and modern database technologies.
 
-![Screenshot 2025-04-09 234147](https://github.com/user-attachments/assets/904c1c82-2a7c-4f94-838b-d229c86df16b)
-
-
 ## ✨ Features
 
 - **Authentication**  
